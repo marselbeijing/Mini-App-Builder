@@ -68,7 +68,7 @@ export const List = ({ items = ['Элемент 1', 'Элемент 2', 'Эле�
   </MuiList>
 );
 
-export const Container = ({ children, maxWidth = 'sm', ...props }) => (
+export const Container = ({ children, maxWidth = 'sm', ...props }: { children: React.ReactNode; maxWidth?: Breakpoint } & React.ComponentProps<typeof MuiContainer>) => (
   <MuiContainer
     maxWidth={maxWidth as Breakpoint}
     {...props}
@@ -87,7 +87,7 @@ export const Container = ({ children, maxWidth = 'sm', ...props }) => (
   </MuiContainer>
 );
 
-export const Divider = (props) => (
+export const Divider = (props: React.ComponentProps<typeof MuiDivider>) => (
   <Box
     sx={{
       transition: 'all 0.2s',
@@ -110,6 +110,4 @@ export const CustomImage = ({ src = '', alt = 'image', width = '100%', height = 
     style={{ display: 'block', maxWidth: '100%', height: 'auto', ...style }}
     {...props}
   />
-);
-
-export { Button, Text, CustomImage, List, Divider, Container, ComponentType, isContainer }; 
+); 
