@@ -101,25 +101,13 @@ export const Divider = (props) => (
   </Box>
 );
 
-export const CustomImage = ({ src = 'https://via.placeholder.com/300x200', alt = 'Изображение', width = 300, height = 200, ...props }) => (
-  <Box
-    sx={{
-      position: 'relative',
-      width: width,
-      height: height,
-      transition: 'all 0.2s',
-      '&:hover': {
-        transform: 'scale(1.02)',
-      },
-      ...props.sx,
-    }}
-  >
-    <NextImage
-      src={src}
-      alt={alt}
-      fill
-      style={{ objectFit: 'cover' }}
-      {...props}
-    />
-  </Box>
+export const CustomImage = ({ src = '', alt = 'image', width = '100%', height = 'auto', style = {}, ...props }) => (
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    style={{ display: 'block', maxWidth: '100%', height: 'auto', ...style }}
+    {...props}
+  />
 ); 
