@@ -1,9 +1,14 @@
 import { Box, Menu, MenuItem, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DragDropContext, Droppable, DroppableProvided, DropResult, Draggable } from 'react-beautiful-dnd';
-import { Button, Text, CustomImage, List, Divider, Container, ComponentType, isContainer } from './components';
+import { Button, Text, CustomImage, List, Divider, Container, ComponentType, isContainer } from './components/index';
 import { useEditorStore } from '@/store/editorStore';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, ReactNode } from 'react';
+
+type ComponentProps = {
+  children?: ReactNode;
+  [key: string]: any;
+};
 
 const componentMap = {
   button: Button,
@@ -12,7 +17,9 @@ const componentMap = {
   list: List,
   divider: Divider,
   container: Container,
-};
+} as const;
+
+type ComponentMapType = typeof componentMap;
 
 interface ComponentListProps {
   components: string[];
@@ -20,7 +27,7 @@ interface ComponentListProps {
   level: number;
 }
 
-function ComponentList({ components, parentId, level }: ComponentListProps) {
+const ComponentList = ({ components = [], parentId = null, level = 0 }: ComponentListProps) => {
   const { selectedId, actions, allComponents } = useEditorStore((state) => ({
     selectedId: state.selectedId,
     actions: state.actions,
@@ -132,6 +139,17 @@ function ComponentList({ components, parentId, level }: ComponentListProps) {
     setDraggingId(null);
   };
 
+  const renderComponent = (
+    Component: React.ComponentType<any>,
+    props: any,
+    children?: React.ReactNode
+  ) => {
+    if (children) {
+      return <Component {...props}>{children}</Component>;
+    }
+    return <Component {...props} />;
+  };
+
   return (
     <Droppable droppableId={parentId ? `container-${parentId}` : 'canvas'}>
       {(provided: DroppableProvided) => (
@@ -201,15 +219,17 @@ function ComponentList({ components, parentId, level }: ComponentListProps) {
                       </IconButton>
                     )}
                     {isContainerType ? (
-                      <Component {...component.props}>
-                        <ComponentList
-                          components={component.children}
-                          parentId={component.id}
-                          level={level + 1}
-                        />
-                      </Component>
+                      <Box sx={{ width: '100%' }}>
+                        {renderComponent(Component, component.props, 
+                          <ComponentList
+                            components={component.children}
+                            parentId={component.id}
+                            level={level + 1}
+                          />
+                        )}
+                      </Box>
                     ) : (
-                      <Component {...component.props} />
+                      renderComponent(Component, component.props)
                     )}
                   </Box>
                 )}
@@ -237,7 +257,7 @@ function ComponentList({ components, parentId, level }: ComponentListProps) {
       )}
     </Droppable>
   );
-}
+};
 
 export function Canvas() {
   const { components, actions } = useEditorStore((state) => ({
