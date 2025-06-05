@@ -3,7 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { DragDropContext, Droppable, DroppableProvided, DropResult, Draggable } from 'react-beautiful-dnd';
 import { Button, Text, CustomImage, List, Divider, Container, ComponentType, isContainer } from './components/index';
 import { useEditorStore } from '@/store/editorStore';
-import { useState, useCallback, useEffect, ReactNode } from 'react';
+import { useState, useCallback, useEffect, ReactNode, memo } from 'react';
 
 type ComponentProps = {
   children?: ReactNode;
@@ -21,13 +21,17 @@ const componentMap = {
 
 type ComponentMapType = typeof componentMap;
 
-interface ComponentListProps {
-  components: string[];
-  parentId: string | null;
-  level: number;
-}
+type ComponentListProps = {
+  components?: any[];
+  parentId?: string | null;
+  level?: number;
+};
 
-const ComponentList = ({ components = [], parentId = null, level = 0 }: ComponentListProps) => {
+const ComponentList = memo(({ 
+  components = [], 
+  parentId = null, 
+  level = 0 
+}: ComponentListProps) => {
   const { selectedId, actions, allComponents } = useEditorStore((state) => ({
     selectedId: state.selectedId,
     actions: state.actions,
@@ -257,7 +261,7 @@ const ComponentList = ({ components = [], parentId = null, level = 0 }: Componen
       )}
     </Droppable>
   );
-};
+});
 
 export function Canvas() {
   const { components, actions } = useEditorStore((state) => ({

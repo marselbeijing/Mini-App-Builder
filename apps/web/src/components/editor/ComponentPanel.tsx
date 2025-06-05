@@ -36,7 +36,13 @@ export function ComponentPanel() {
 
   const componentList = useMemo(() => {
     return (
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ 
+        p: 2,
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 2
+      }}>
         {COMPONENTS.map((component, index) => {
           const Icon = component.icon;
           return (
@@ -44,10 +50,12 @@ export function ComponentPanel() {
               key={component.type}
               sx={{
                 p: 2,
-                mb: 2,
                 display: 'flex',
                 alignItems: 'center',
                 cursor: 'pointer',
+                flex: '1 1 auto',
+                minWidth: '100px',
+                justifyContent: 'center',
                 '&:hover': {
                   bgcolor: 'action.hover',
                 },
@@ -72,14 +80,14 @@ export function ComponentPanel() {
   return (
     <Box
       sx={{
-        width: 250,
+        width: '100%',
         borderRight: 1,
         borderColor: 'divider',
         overflow: 'auto',
       }}
     >
       <Typography variant="h6" sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
-        Components
+        Компоненты
       </Typography>
       {componentList}
     </Box>
