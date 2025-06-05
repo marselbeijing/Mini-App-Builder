@@ -38,9 +38,14 @@ export function ComponentPanel() {
     <Box
       sx={{
         width: { xs: '40px', sm: '50px' },
+        height: '100%',
         borderRight: 1,
         borderColor: 'divider',
-        overflow: 'hidden',
+        position: 'fixed',
+        left: 0,
+        top: 0,
+        backgroundColor: 'background.paper',
+        zIndex: 1200,
       }}
     >
       <Droppable droppableId="components" isDropDisabled>
@@ -50,6 +55,7 @@ export function ComponentPanel() {
             {...provided.droppableProps}
             sx={{ 
               p: 1,
+              height: '100%',
               display: 'flex',
               flexDirection: 'column',
               gap: 1,
@@ -81,9 +87,8 @@ export function ComponentPanel() {
                         display: 'flex',
                         alignItems: 'center',
                         cursor: 'grab',
-                        minWidth: '40px',
-                        maxWidth: '40px',
-                        height: '30px',
+                        width: '40px',
+                        height: '40px',
                         justifyContent: 'center',
                         flexDirection: 'column',
                         opacity: snapshot.isDragging ? 0.5 : 1,
@@ -102,8 +107,16 @@ export function ComponentPanel() {
                         });
                       }}
                     >
-                      <Icon sx={{ fontSize: '1rem' }} />
-                      <Typography variant="caption" noWrap sx={{ fontSize: '0.6rem' }}>
+                      <Icon sx={{ fontSize: '1.2rem' }} />
+                      <Typography 
+                        variant="caption" 
+                        noWrap 
+                        sx={{ 
+                          fontSize: '0.6rem',
+                          maxWidth: '100%',
+                          textAlign: 'center'
+                        }}
+                      >
                         {component.label}
                       </Typography>
                     </Paper>

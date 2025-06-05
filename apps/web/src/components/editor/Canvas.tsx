@@ -277,7 +277,8 @@ export function Canvas() {
         flex: 1, 
         overflow: 'hidden',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        ml: { xs: '40px', sm: '50px' }
       }} 
       onClick={handleCanvasClick}
     >
