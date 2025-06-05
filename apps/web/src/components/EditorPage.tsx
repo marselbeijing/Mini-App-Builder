@@ -4,6 +4,9 @@ import { FC } from 'react';
 import { Box, IconButton, Typography, Button } from '@mui/material';
 import { Close, MoreVert } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
+import { Canvas } from './editor/Canvas';
+import { ComponentPanel } from './editor/ComponentPanel';
+import { Toolbar } from './editor/Toolbar';
 
 interface Tool {
   id: string;
@@ -73,77 +76,15 @@ export const EditorPage: FC = () => {
         </IconButton>
       </Box>
 
-      {/* Toolbar */}
-      <Box 
-        component="nav"
-        sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 1, 
-          p: 1,
-          bgcolor: 'white',
-          borderBottom: '1px solid #e0e0e0'
-        }}
-      >
-        <Button 
-          variant="contained" 
-          color="primary" 
-          sx={{ ml: 'auto' }}
-        >
-          PUBLISH
-        </Button>
-      </Box>
-
-      {/* Components Toolbar */}
-      <Box 
-        component="nav"
-        sx={{ 
-          display: 'flex',
-          gap: 1,
-          p: 1,
-          bgcolor: 'white',
-          borderBottom: '1px solid #e0e0e0',
-          overflowX: 'auto'
-        }}
-      >
-        {TOOLS.map((tool) => (
-          <Box
-            key={tool.id}
-            component="button"
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 0.5,
-              p: 1,
-              minWidth: 80,
-              cursor: 'pointer',
-              border: 'none',
-              bgcolor: 'transparent',
-              '&:hover': {
-                bgcolor: '#f5f5f5'
-              }
-            }}
-          >
-            <Typography variant="body2">{tool.icon}</Typography>
-            <Typography variant="caption">{tool.label}</Typography>
-          </Box>
-        ))}
-      </Box>
-
-      {/* Canvas */}
-      <Box 
-        component="main"
-        sx={{ 
-          flex: 1,
-          p: 2,
-          bgcolor: 'white',
-          borderRadius: 2,
-          m: 2,
-          boxShadow: '0px 2px 4px rgba(0,0,0,0.1)'
-        }}
-      >
-        {/* Canvas content will go here */}
+      <Toolbar />
+      
+      <Box sx={{ 
+        display: 'flex',
+        flex: 1,
+        overflow: 'hidden'
+      }}>
+        <ComponentPanel />
+        <Canvas />
       </Box>
     </Box>
   );

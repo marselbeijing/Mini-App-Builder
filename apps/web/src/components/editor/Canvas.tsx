@@ -1,31 +1,30 @@
 import { Box, Menu, MenuItem, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DragDropContext, Droppable, DroppableProvided, DropResult, Draggable } from 'react-beautiful-dnd';
-import { Button, Text, CustomImage, List, Divider, Container, ComponentType, isContainer } from './components/index';
+import { Button, Text, CustomImage, List, Divider, Container, ComponentType, isContainer } from './components';
 import { useEditorStore } from '@/store/editorStore';
 import { useState, useCallback, useEffect, ReactNode, memo } from 'react';
+import { PhonePreview } from './PhonePreview';
 
-type ComponentProps = {
+interface ComponentProps {
   children?: ReactNode;
   [key: string]: any;
-};
+}
 
-const componentMap = {
+const componentMap: Record<ComponentType, React.ComponentType<any>> = {
   button: Button,
   text: Text,
   image: CustomImage,
   list: List,
   divider: Divider,
   container: Container,
-} as const;
-
-type ComponentMapType = typeof componentMap;
-
-type ComponentListProps = {
-  components?: any[];
-  parentId?: string | null;
-  level?: number;
 };
+
+interface ComponentListProps {
+  components: string[];
+  parentId: string | null;
+  level: number;
+}
 
 const ComponentList = memo(({ 
   components = [], 
@@ -276,7 +275,6 @@ export function Canvas() {
 
     const { source, destination, draggableId } = result;
 
-    // Если перетаскивание происходит из панели компонентов
     if (source.droppableId === 'components') {
       const targetParentId = destination.droppableId === 'canvas' ? null : destination.droppableId.replace('container-', '');
 
@@ -289,9 +287,7 @@ export function Canvas() {
       };
 
       actions.addComponent(newComponent, targetParentId);
-    }
-    // Если перетаскивание происходит внутри canvas или между контейнерами
-    else {
+    } else {
       const sourceParentId = source.droppableId === 'canvas' ? null : source.droppableId.replace('container-', '');
       const targetParentId = destination.droppableId === 'canvas' ? null : destination.droppableId.replace('container-', '');
 
@@ -308,9 +304,19 @@ export function Canvas() {
   };
 
   return (
-    <Box sx={{ flex: 1, overflow: 'auto', p: 2 }} onClick={handleCanvasClick}>
+    <Box 
+      sx={{ 
+        flex: 1, 
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column'
+      }} 
+      onClick={handleCanvasClick}
+    >
       <DragDropContext onDragEnd={handleDragEnd}>
-        <ComponentList components={rootComponents} parentId={null} level={0} />
+        <PhonePreview>
+          <ComponentList components={rootComponents} parentId={null} level={0} />
+        </PhonePreview>
       </DragDropContext>
     </Box>
   );

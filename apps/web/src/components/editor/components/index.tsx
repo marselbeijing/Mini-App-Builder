@@ -13,101 +13,238 @@ export interface ComponentData {
 
 export type ComponentType = 'button' | 'text' | 'image' | 'list' | 'divider' | 'container';
 
-export const isContainer = (type: ComponentType): boolean => {
-  return type === 'container';
-};
+export const isContainer = (type: ComponentType): boolean => type === 'container';
 
-export const Button = ({ variant = 'contained', color = 'primary', children = 'Кнопка', ...props }) => (
+interface BaseComponentProps {
+  onClick?: (e: React.MouseEvent) => void;
+  className?: string;
+  sx?: any;
+}
+
+interface ButtonProps extends BaseComponentProps {
+  variant?: 'contained' | 'outlined' | 'text';
+  color?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
+  children?: React.ReactNode;
+}
+
+interface TextProps extends BaseComponentProps {
+  variant?: 'body1' | 'body2' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  color?: string;
+  children?: React.ReactNode;
+}
+
+interface ImageProps extends BaseComponentProps {
+  src?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+}
+
+interface ListProps extends BaseComponentProps {
+  items?: string[];
+}
+
+interface DividerProps extends BaseComponentProps {
+  orientation?: 'horizontal' | 'vertical';
+  variant?: 'fullWidth' | 'inset' | 'middle';
+  color?: string;
+}
+
+interface ContainerProps extends BaseComponentProps {
+  maxWidth?: Breakpoint;
+  padding?: number;
+  backgroundColor?: string;
+  children?: React.ReactNode;
+}
+
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({ 
+  variant = 'contained', 
+  color = 'primary', 
+  children = 'Кнопка',
+  onClick,
+  className = 'component',
+  ...props 
+}, ref) => (
   <MuiButton
-    variant={variant as 'contained' | 'outlined' | 'text'}
-    color={color as 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
-    {...props}
-    sx={{
-      transition: 'all 0.2s',
-      '&:hover': {
-        transform: 'scale(1.02)',
-      },
-      ...props.sx,
+    ref={ref}
+    variant={variant}
+    color={color}
+    onClick={(e) => {
+      e.stopPropagation();
+      if (onClick) onClick(e);
     }}
+    className={className}
+    {...props}
   >
     {children}
   </MuiButton>
-);
+));
+Button.displayName = 'Button';
 
-export const Text = ({ variant = 'body1', color = 'text.primary', children = 'Текст', ...props }) => (
+export const Text = React.forwardRef<HTMLDivElement, TextProps>(({
+  variant = 'body1',
+  color = 'text.primary',
+  children = 'Текст',
+  onClick,
+  className = 'component',
+  ...props
+}, ref) => (
   <Typography
-    variant={variant as 'body1' | 'body2' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'}
+    ref={ref}
+    variant={variant}
     color={color}
-    {...props}
-    sx={{
-      transition: 'all 0.2s',
-      '&:hover': {
-        transform: 'scale(1.02)',
-      },
-      ...props.sx,
+    onClick={(e) => {
+      e.stopPropagation();
+      if (onClick) onClick(e);
     }}
+    className={className}
+    {...props}
   >
     {children}
   </Typography>
-);
+));
+Text.displayName = 'Text';
 
-export const List = ({ items = ['Элемент 1', 'Элемент 2', 'Элемент 3'], ...props }) => (
-  <MuiList
-    {...props}
-    sx={{
-      transition: 'all 0.2s',
-      '&:hover': {
-        transform: 'scale(1.02)',
-      },
-      ...props.sx,
+export const CustomImage = React.forwardRef<HTMLDivElement, ImageProps>(({
+  src = '',
+  alt = '',
+  width = 200,
+  height = 200,
+  onClick,
+  className = 'component',
+  ...props
+}, ref) => (
+  <Box
+    ref={ref}
+    onClick={(e) => {
+      e.stopPropagation();
+      if (onClick) onClick(e);
     }}
+    className={className}
+    sx={{
+      position: 'relative',
+      width,
+      height,
+      overflow: 'hidden',
+      borderRadius: 1,
+      ...props.sx
+    }}
+  >
+    {src ? (
+      <NextImage
+        src={src}
+        alt={alt}
+        layout="fill"
+        objectFit="cover"
+      />
+    ) : (
+      <Box
+        sx={{
+          width: '100%',
+          height: '100%',
+          bgcolor: 'action.hover',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'text.secondary',
+        }}
+      >
+        Изображение
+      </Box>
+    )}
+  </Box>
+));
+CustomImage.displayName = 'CustomImage';
+
+export const List = React.forwardRef<HTMLUListElement, ListProps>(({
+  items = ['Элемент 1', 'Элемент 2', 'Элемент 3'],
+  onClick,
+  className = 'component',
+  ...props
+}, ref) => (
+  <MuiList
+    ref={ref}
+    onClick={(e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (onClick) onClick(e);
+    }}
+    className={className}
+    {...props}
   >
     {items.map((item, index) => (
       <ListItem key={index}>{item}</ListItem>
     ))}
   </MuiList>
-);
+));
+List.displayName = 'List';
 
-export const Container = ({ children, maxWidth = 'sm', ...props }: { children: React.ReactNode; maxWidth?: Breakpoint } & React.ComponentProps<typeof MuiContainer>) => (
-  <MuiContainer
-    maxWidth={maxWidth as Breakpoint}
-    {...props}
-    sx={{
-      transition: 'all 0.2s',
-      '&:hover': {
-        transform: 'scale(1.02)',
-      },
-      backgroundColor: 'background.default',
-      borderRadius: 1,
-      p: 2,
-      ...props.sx,
-    }}
-  >
-    {children}
-  </MuiContainer>
-);
-
-export const Divider = (props: React.ComponentProps<typeof MuiDivider>) => (
+export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(({
+  orientation = 'horizontal',
+  variant = 'fullWidth',
+  color,
+  onClick,
+  className = 'component',
+  ...props
+}, ref) => (
   <Box
+    ref={ref}
+    onClick={(e) => {
+      e.stopPropagation();
+      if (onClick) onClick(e);
+    }}
+    className={className}
+  >
+    <MuiDivider
+      orientation={orientation}
+      variant={variant}
+      sx={{ bgcolor: color }}
+      {...props}
+    />
+  </Box>
+));
+Divider.displayName = 'Divider';
+
+export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(({
+  maxWidth = 'lg',
+  padding = 2,
+  backgroundColor,
+  children,
+  onClick,
+  className = 'component',
+  ...props
+}, ref) => (
+  <Box
+    ref={ref}
+    onClick={(e) => {
+      e.stopPropagation();
+      if (onClick) onClick(e);
+    }}
+    className={className}
     sx={{
-      transition: 'all 0.2s',
-      '&:hover': {
-        transform: 'scale(1.02)',
-      },
-      py: 1,
+      width: '100%',
+      maxWidth: (theme) => theme.breakpoints.values[maxWidth],
+      mx: 'auto',
+      p: padding,
+      backgroundColor,
+      borderRadius: 1,
+      border: '1px dashed',
+      borderColor: 'divider',
+      ...props.sx
     }}
   >
-    <MuiDivider {...props} />
+    {children || (
+      <Box
+        sx={{
+          height: 100,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'text.secondary',
+        }}
+      >
+        Контейнер
+      </Box>
+    )}
   </Box>
-);
-
-export const CustomImage = ({ src = '', alt = 'image', width = '100%', height = 'auto', style = {}, ...props }) => (
-  <img
-    src={src}
-    alt={alt}
-    width={width}
-    height={height}
-    style={{ display: 'block', maxWidth: '100%', height: 'auto', ...style }}
-    {...props}
-  />
-); 
+));
+Container.displayName = 'Container'; 
