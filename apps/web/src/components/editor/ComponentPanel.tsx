@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Paper, Typography } from '@mui/material';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import SmartButtonIcon from '@mui/icons-material/SmartButton';
 import TextFieldsIcon from '@mui/icons-material/TextFields';
 import ImageIcon from '@mui/icons-material/Image';
@@ -34,59 +34,6 @@ const COMPONENTS = [
 export function ComponentPanel() {
   const addComponent = useEditorStore((state) => state.actions.addComponent);
 
-  const componentList = useMemo(() => {
-    return (
-      <Box sx={{ 
-        p: 1,
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'nowrap',
-        gap: 1,
-        overflowX: 'auto',
-        '&::-webkit-scrollbar': {
-          height: '6px'
-        },
-        '&::-webkit-scrollbar-thumb': {
-          backgroundColor: 'rgba(0,0,0,0.2)',
-          borderRadius: '3px'
-        }
-      }}>
-        {COMPONENTS.map((component, index) => {
-          const Icon = component.icon;
-          return (
-            <Paper
-              key={component.type}
-              sx={{
-                p: 1,
-                display: 'flex',
-                alignItems: 'center',
-                cursor: 'pointer',
-                minWidth: '80px',
-                maxWidth: '80px',
-                height: '60px',
-                justifyContent: 'center',
-                flexDirection: 'column',
-                '&:hover': {
-                  bgcolor: 'action.hover',
-                },
-              }}
-              onClick={() => addComponent({
-                id: generateId(),
-                type: component.type,
-                props: {},
-                parentId: null,
-                children: []
-              })}
-            >
-              <Icon sx={{ fontSize: '1.2rem', mb: 0.5 }} />
-              <Typography variant="caption" noWrap>{component.label}</Typography>
-            </Paper>
-          );
-        })}
-      </Box>
-    );
-  }, [addComponent]);
-
   return (
     <Box
       sx={{
@@ -96,7 +43,79 @@ export function ComponentPanel() {
         overflow: 'hidden',
       }}
     >
-      {componentList}
+      <Droppable droppableId="components" isDropDisabled>
+        {(provided) => (
+          <Box
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            sx={{ 
+              p: 1,
+              display: 'flex',
+              flexDirection: 'row',
+              flexWrap: 'nowrap',
+              gap: 1,
+              overflowX: 'auto',
+              '&::-webkit-scrollbar': {
+                height: '6px'
+              },
+              '&::-webkit-scrollbar-thumb': {
+                backgroundColor: 'rgba(0,0,0,0.2)',
+                borderRadius: '3px'
+              }
+            }}
+          >
+            {COMPONENTS.map((component, index) => {
+              const Icon = component.icon;
+              return (
+                <Draggable
+                  key={component.type}
+                  draggableId={component.type}
+                  index={index}
+                >
+                  {(provided, snapshot) => (
+                    <Paper
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      sx={{
+                        p: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        cursor: 'grab',
+                        minWidth: '80px',
+                        maxWidth: '80px',
+                        height: '60px',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        opacity: snapshot.isDragging ? 0.5 : 1,
+                        '&:hover': {
+                          bgcolor: 'action.hover',
+                        },
+                      }}
+                      onClick={() => {
+                        const id = generateId();
+                        addComponent({
+                          id,
+                          type: component.type,
+                          props: {},
+                          parentId: null,
+                          children: [],
+                        });
+                      }}
+                    >
+                      <Icon sx={{ fontSize: '1.2rem', mb: 0.5 }} />
+                      <Typography variant="caption" noWrap>
+                        {component.label}
+                      </Typography>
+                    </Paper>
+                  )}
+                </Draggable>
+              );
+            })}
+            {provided.placeholder}
+          </Box>
+        )}
+      </Droppable>
     </Box>
   );
 } 

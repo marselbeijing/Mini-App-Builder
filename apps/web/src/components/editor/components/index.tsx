@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box, Button as MuiButton, Typography, List as MuiList, ListItem, Divider as MuiDivider, Container as MuiContainer } from '@mui/material';
+import { Box, Button as MuiButton, Typography, List as MuiList, ListItem, Divider as MuiDivider } from '@mui/material';
 import { Breakpoint } from '@mui/material/styles';
+import { SxProps, Theme } from '@mui/material/styles';
 import NextImage from 'next/image';
 
 export interface ComponentData {
@@ -17,8 +18,9 @@ export const isContainer = (type: ComponentType): boolean => type === 'container
 
 interface BaseComponentProps {
   onClick?: (e: React.MouseEvent) => void;
+  style?: React.CSSProperties;
   className?: string;
-  sx?: any;
+  sx?: SxProps<Theme>;
 }
 
 interface ButtonProps extends BaseComponentProps {
@@ -57,13 +59,15 @@ interface ContainerProps extends BaseComponentProps {
   children?: React.ReactNode;
 }
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({ 
-  variant = 'contained', 
-  color = 'primary', 
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
+  variant = 'contained',
+  color = 'primary',
   children = 'Кнопка',
   onClick,
+  style,
   className = 'component',
-  ...props 
+  sx,
+  ...props
 }, ref) => (
   <MuiButton
     ref={ref}
@@ -74,6 +78,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
       if (onClick) onClick(e);
     }}
     className={className}
+    style={style}
+    sx={sx}
     {...props}
   >
     {children}
@@ -86,7 +92,9 @@ export const Text = React.forwardRef<HTMLDivElement, TextProps>(({
   color = 'text.primary',
   children = 'Текст',
   onClick,
+  style,
   className = 'component',
+  sx,
   ...props
 }, ref) => (
   <Typography
@@ -98,6 +106,8 @@ export const Text = React.forwardRef<HTMLDivElement, TextProps>(({
       if (onClick) onClick(e);
     }}
     className={className}
+    style={style}
+    sx={sx}
     {...props}
   >
     {children}
@@ -111,7 +121,9 @@ export const CustomImage = React.forwardRef<HTMLDivElement, ImageProps>(({
   width = 200,
   height = 200,
   onClick,
+  style,
   className = 'component',
+  sx,
   ...props
 }, ref) => (
   <Box
@@ -121,14 +133,16 @@ export const CustomImage = React.forwardRef<HTMLDivElement, ImageProps>(({
       if (onClick) onClick(e);
     }}
     className={className}
+    style={style}
     sx={{
       position: 'relative',
       width,
       height,
       overflow: 'hidden',
       borderRadius: 1,
-      ...props.sx
+      ...sx
     }}
+    {...props}
   >
     {src ? (
       <NextImage
@@ -159,16 +173,20 @@ CustomImage.displayName = 'CustomImage';
 export const List = React.forwardRef<HTMLUListElement, ListProps>(({
   items = ['Элемент 1', 'Элемент 2', 'Элемент 3'],
   onClick,
+  style,
   className = 'component',
+  sx,
   ...props
 }, ref) => (
   <MuiList
     ref={ref}
-    onClick={(e: React.MouseEvent) => {
+    onClick={(e) => {
       e.stopPropagation();
       if (onClick) onClick(e);
     }}
     className={className}
+    style={style}
+    sx={sx}
     {...props}
   >
     {items.map((item, index) => (
@@ -183,7 +201,9 @@ export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(({
   variant = 'fullWidth',
   color,
   onClick,
+  style,
   className = 'component',
+  sx,
   ...props
 }, ref) => (
   <Box
@@ -193,12 +213,14 @@ export const Divider = React.forwardRef<HTMLDivElement, DividerProps>(({
       if (onClick) onClick(e);
     }}
     className={className}
+    style={style}
+    sx={sx}
+    {...props}
   >
     <MuiDivider
       orientation={orientation}
       variant={variant}
       sx={{ bgcolor: color }}
-      {...props}
     />
   </Box>
 ));
@@ -210,7 +232,9 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(({
   backgroundColor,
   children,
   onClick,
+  style,
   className = 'component',
+  sx,
   ...props
 }, ref) => (
   <Box
@@ -220,6 +244,7 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(({
       if (onClick) onClick(e);
     }}
     className={className}
+    style={style}
     sx={{
       width: '100%',
       maxWidth: (theme) => theme.breakpoints.values[maxWidth],
@@ -229,8 +254,9 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(({
       borderRadius: 1,
       border: '1px dashed',
       borderColor: 'divider',
-      ...props.sx
+      ...sx
     }}
+    {...props}
   >
     {children || (
       <Box

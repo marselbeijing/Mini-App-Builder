@@ -43,8 +43,6 @@ const ComponentList = memo(({
     componentId: string;
   } | null>(null);
 
-  const [draggingId, setDraggingId] = useState<string | null>(null);
-
   const handleContextMenu = (event: React.MouseEvent, componentId: string) => {
     event.preventDefault();
     event.stopPropagation();
@@ -94,63 +92,32 @@ const ComponentList = memo(({
     }
   };
 
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (!selectedId) return;
-
-    if (e.key === 'Delete' || e.key === 'Backspace') {
-      e.preventDefault();
-      actions.removeComponent(selectedId);
-    } else if (e.metaKey || e.ctrlKey) {
-      if (e.key === 'c') {
-        e.preventDefault();
-        actions.copyComponent(selectedId);
-      } else if (e.key === 'x') {
-        e.preventDefault();
-        actions.cutComponent(selectedId);
-      } else if (e.key === 'v') {
-        e.preventDefault();
-        const component = allComponents.find(c => c.id === selectedId);
-        if (component && isContainer(component.type)) {
-          actions.pasteComponent(selectedId);
-        } else if (component) {
-          actions.pasteComponent(component.parentId);
-        }
-      } else if (e.key === 'd') {
-        e.preventDefault();
-        actions.duplicateComponent(selectedId);
-      }
-    }
-  }, [selectedId, actions, allComponents]);
-
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [handleKeyDown]);
-
   const handleComponentClick = (e: React.MouseEvent, componentId: string) => {
     e.stopPropagation();
     actions.setSelectedId(componentId);
   };
 
-  const handleDragStart = (componentId: string) => {
-    setDraggingId(componentId);
-  };
-
-  const handleDragEnd = () => {
-    setDraggingId(null);
-  };
-
   const renderComponent = (
     Component: React.ComponentType<any>,
     props: any,
+    componentId: string,
     children?: React.ReactNode
   ) => {
+    const isSelected = selectedId === componentId;
+    const componentProps = {
+      ...props,
+      onClick: (e: React.MouseEvent) => handleComponentClick(e, componentId),
+      style: {
+        ...props.style,
+        outline: isSelected ? '2px solid #1976d2' : 'none',
+        cursor: 'pointer',
+      },
+    };
+
     if (children) {
-      return <Component {...props}>{children}</Component>;
+      return <Component {...componentProps}>{children}</Component>;
     }
-    return <Component {...props} />;
+    return <Component {...componentProps} />;
   };
 
   return (
@@ -180,17 +147,10 @@ const ComponentList = memo(({
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    onClick={(e) => handleComponentClick(e, component.id)}
                     onContextMenu={(e) => handleContextMenu(e, component.id)}
-                    onDragStart={() => handleDragStart(component.id)}
-                    onDragEnd={handleDragEnd}
                     sx={{
                       mb: 2,
                       cursor: 'move',
-                      outline: selectedId === component.id ? '2px solid' : 'none',
-                      outlineColor: 'primary.main',
-                      borderRadius: 1,
-                      p: 1,
                       position: 'relative',
                       '&:hover .delete-button': {
                         opacity: 1,
@@ -223,7 +183,10 @@ const ComponentList = memo(({
                     )}
                     {isContainerType ? (
                       <Box sx={{ width: '100%' }}>
-                        {renderComponent(Component, component.props, 
+                        {renderComponent(
+                          Component,
+                          component.props,
+                          component.id,
                           <ComponentList
                             components={component.children}
                             parentId={component.id}
@@ -232,7 +195,7 @@ const ComponentList = memo(({
                         )}
                       </Box>
                     ) : (
-                      renderComponent(Component, component.props)
+                      renderComponent(Component, component.props, component.id)
                     )}
                   </Box>
                 )}
@@ -254,13 +217,17 @@ const ComponentList = memo(({
             <MenuItem onClick={handleCut}>Вырезать</MenuItem>
             <MenuItem onClick={handlePaste}>Вставить</MenuItem>
             <MenuItem onClick={handleDuplicate}>Дублировать</MenuItem>
-            <MenuItem onClick={() => contextMenu && handleDelete(contextMenu.componentId)}>Удалить</MenuItem>
+            <MenuItem onClick={() => contextMenu && handleDelete(contextMenu.componentId)}>
+              Удалить
+            </MenuItem>
           </Menu>
         </Box>
       )}
     </Droppable>
   );
 });
+
+ComponentList.displayName = 'ComponentList';
 
 export function Canvas() {
   const { components, actions } = useEditorStore((state) => ({
@@ -299,7 +266,8 @@ export function Canvas() {
     }
   };
 
-  const handleCanvasClick = () => {
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     actions.setSelectedId(null);
   };
 
