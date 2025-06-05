@@ -1,24 +1,63 @@
 'use client';
 
-import React from 'react';
-import { ThemeProvider } from '@mui/material/styles';
-import { createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { StyledEngineProvider } from '@mui/material/styles';
+import { FC, ReactNode } from 'react';
+import { ThemeProvider, createTheme, StyledEngineProvider } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
+
+interface MUIProviderProps {
+  children: ReactNode;
+}
 
 const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#2196f3',
+      main: '#0088cc',
     },
-    secondary: {
-      main: '#f50057',
+    background: {
+      default: '#f5f5f5',
+      paper: '#ffffff',
+    },
+  },
+  typography: {
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+  },
+  components: {
+    MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+      },
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          borderRadius: 8,
+        },
+        contained: {
+          boxShadow: 'none',
+          '&:hover': {
+            boxShadow: 'none',
+          },
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+        },
+      },
     },
   },
 });
 
-export function MUIProvider({ children }: { children: React.ReactNode }) {
+export const MUIProvider: FC<MUIProviderProps> = ({ children }) => {
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
@@ -27,4 +66,4 @@ export function MUIProvider({ children }: { children: React.ReactNode }) {
       </ThemeProvider>
     </StyledEngineProvider>
   );
-} 
+}; 
