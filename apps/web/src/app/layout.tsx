@@ -20,7 +20,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <MUIProvider>
           <TelegramProvider>
-            {children}
+        {children}
           </TelegramProvider>
         </MUIProvider>
       </body>

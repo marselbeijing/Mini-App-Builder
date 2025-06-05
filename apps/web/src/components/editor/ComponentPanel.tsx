@@ -37,7 +37,7 @@ export function ComponentPanel() {
   return (
     <Box
       sx={{
-        width: { xs: '60px', sm: '100%' },
+        width: { xs: '40px', sm: '50px' },
         borderRight: 1,
         borderColor: 'divider',
         overflow: 'hidden',
@@ -51,16 +51,15 @@ export function ComponentPanel() {
             sx={{ 
               p: 1,
               display: 'flex',
-              flexDirection: 'row',
-              flexWrap: 'nowrap',
+              flexDirection: 'column',
               gap: 1,
-              overflowX: 'auto',
+              overflowY: 'auto',
               '&::-webkit-scrollbar': {
-                height: '6px'
+                width: '4px'
               },
               '&::-webkit-scrollbar-thumb': {
                 backgroundColor: 'rgba(0,0,0,0.2)',
-                borderRadius: '3px'
+                borderRadius: '2px'
               }
             }}
           >
@@ -78,13 +77,13 @@ export function ComponentPanel() {
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                       sx={{
-                        p: 1,
+                        p: 0.5,
                         display: 'flex',
                         alignItems: 'center',
                         cursor: 'grab',
-                        minWidth: '80px',
-                        maxWidth: '80px',
-                        height: '60px',
+                        minWidth: '40px',
+                        maxWidth: '40px',
+                        height: '30px',
                         justifyContent: 'center',
                         flexDirection: 'column',
                         opacity: snapshot.isDragging ? 0.5 : 1,
@@ -103,8 +102,8 @@ export function ComponentPanel() {
                         });
                       }}
                     >
-                      <Icon sx={{ fontSize: '1.2rem', mb: 0.5 }} />
-                      <Typography variant="caption" noWrap>
+                      <Icon sx={{ fontSize: '1rem' }} />
+                      <Typography variant="caption" noWrap sx={{ fontSize: '0.6rem' }}>
                         {component.label}
                       </Typography>
                     </Paper>
