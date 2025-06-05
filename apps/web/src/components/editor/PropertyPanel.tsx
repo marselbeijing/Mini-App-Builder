@@ -112,11 +112,7 @@ export function PropertyPanel() {
           borderColor: 'divider',
           p: 2,
         }}
-      >
-        <Typography variant="body2" color="text.secondary" align="center">
-          Выберите компонент для редактирования свойств
-        </Typography>
-      </Paper>
+      />
     );
   }
 

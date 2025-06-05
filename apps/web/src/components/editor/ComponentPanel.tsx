@@ -90,15 +90,12 @@ export function ComponentPanel() {
   return (
     <Box
       sx={{
-        width: '100%',
+        width: { xs: '60px', sm: '100%' },
         borderRight: 1,
         borderColor: 'divider',
         overflow: 'hidden',
       }}
     >
-      <Typography variant="subtitle1" sx={{ p: 1, borderBottom: 1, borderColor: 'divider' }}>
-        Компоненты
-      </Typography>
       {componentList}
     </Box>
   );

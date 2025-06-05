@@ -22,7 +22,9 @@ export function EditorPage() {
           <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
             <ComponentPanel />
             <Canvas />
-            <PropertyPanel />
+            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+              <PropertyPanel />
+            </Box>
           </Box>
         </Paper>
       </Container>
