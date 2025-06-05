@@ -37,11 +37,19 @@ export function ComponentPanel() {
   const componentList = useMemo(() => {
     return (
       <Box sx={{ 
-        p: 2,
+        p: 1,
         display: 'flex',
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 2
+        flexWrap: 'nowrap',
+        gap: 1,
+        overflowX: 'auto',
+        '&::-webkit-scrollbar': {
+          height: '6px'
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: 'rgba(0,0,0,0.2)',
+          borderRadius: '3px'
+        }
       }}>
         {COMPONENTS.map((component, index) => {
           const Icon = component.icon;
@@ -49,13 +57,15 @@ export function ComponentPanel() {
             <Paper
               key={component.type}
               sx={{
-                p: 2,
+                p: 1,
                 display: 'flex',
                 alignItems: 'center',
                 cursor: 'pointer',
-                flex: '1 1 auto',
-                minWidth: '100px',
+                minWidth: '80px',
+                maxWidth: '80px',
+                height: '60px',
                 justifyContent: 'center',
+                flexDirection: 'column',
                 '&:hover': {
                   bgcolor: 'action.hover',
                 },
@@ -68,8 +78,8 @@ export function ComponentPanel() {
                 children: []
               })}
             >
-              <Icon sx={{ mr: 1 }} />
-              <Typography>{component.label}</Typography>
+              <Icon sx={{ fontSize: '1.2rem', mb: 0.5 }} />
+              <Typography variant="caption" noWrap>{component.label}</Typography>
             </Paper>
           );
         })}
@@ -83,10 +93,10 @@ export function ComponentPanel() {
         width: '100%',
         borderRight: 1,
         borderColor: 'divider',
-        overflow: 'auto',
+        overflow: 'hidden',
       }}
     >
-      <Typography variant="h6" sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
+      <Typography variant="subtitle1" sx={{ p: 1, borderBottom: 1, borderColor: 'divider' }}>
         Компоненты
       </Typography>
       {componentList}
